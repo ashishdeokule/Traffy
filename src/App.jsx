@@ -931,19 +931,21 @@ export default function App() {
   const callClaude = async (system, messages) => {
     try {
       const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer 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`
-  },
-  body: JSON.stringify({
-    model: "llama-3.3-70b-versatile",
-    max_tokens: 1000,
-    messages: [{ role: "system", content: system }, ...messages]
-  })
-});
-const data = await res.json();
-return data.choices[0].message.content;
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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",
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          max_tokens: 1000,
+          temperature: 0.7,
+          messages: [{ role: "system", content: system }, ...messages],
+        }),
+      });
+      const data = await res.json();
+      if (data.error) return `Error: ${data.error.message}`;
+      return data.choices?.[0]?.message?.content || "No response.";
     } catch (e) { return "Connection error: " + e.message; }
   };
 
