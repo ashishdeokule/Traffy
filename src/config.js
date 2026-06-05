@@ -1,5 +1,5 @@
 // ── PASTE YOUR GROQ API KEY HERE ──────────────────────────
-export const GROQ_API_KEY = "paste_your_gsk_key_here";
+export const GROQ_API_KEY = "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";
 
 // ── GROQ MODEL (free) ─────────────────────────────────────
 export const GROQ_MODEL = "llama-3.3-70b-versatile";
