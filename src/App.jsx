@@ -495,9 +495,9 @@ function GymLog({ workout, setWorkout, config }) {
 // ══════════════════════════════════════════════════════════════════════════
 // BODY + GUT + SLEEP
 // ══════════════════════════════════════════════════════════════════════════
-function BodyGut({ metrics, setMetrics, gut, setGut, skin, setSkin, sleep: slp, setSleep }) {
+function BodyGut({ metrics, setMetrics, gut, setGut, skin, setSkin, sleep: slp, setSleep, initialPanel }) {
   const [date, setDate] = useState(todayStr());
-  const [panel, setPanel] = useState("body");
+  const [panel, setPanel] = useState(initialPanel || "body");
   const me = metrics[date] || {};
   const ge = gut[date] || {};
   const ske = skin[date] || {};
@@ -932,12 +932,17 @@ export default function App() {
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "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",
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
         body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages }),
       });
       const data = await res.json();
       return data.content?.[0]?.text || "No response.";
-    } catch { return "Connection error. Try again."; }
+    } catch (e) { return "Connection error: " + e.message; }
   };
 
   // Patch callClaude into Traffy via window (simple bridge)
@@ -969,14 +974,14 @@ export default function App() {
         {tab === "diet" && <DietLog diet={diet} setDiet={setDiet} config={config} />}
         {tab === "gym" && <GymLog workout={workout} setWorkout={setWorkout} config={config} />}
         {tab === "body" && <BodyGut metrics={metrics} setMetrics={setMetrics} gut={gut} setGut={setGut} skin={skin} setSkin={setSkin} sleep={sleep} setSleep={setSleep} />}
-        {tab === "gut" && <BodyGut metrics={metrics} setMetrics={setMetrics} gut={gut} setGut={setGut} skin={skin} setSkin={setSkin} sleep={sleep} setSleep={setSleep} />}
+        {tab === "gut" && <BodyGut metrics={metrics} setMetrics={setMetrics} gut={gut} setGut={setGut} skin={skin} setSkin={setSkin} sleep={sleep} setSleep={setSleep} initialPanel="gut" />}
         {tab === "traffy" && <Traffy allData={allData} config={config} setConfig={setConfig} />}
       </div>
 
       {/* Bottom nav */}
       <div style={{ position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 480, background: "#09090cee", backdropFilter: "blur(16px)", borderTop: `1px solid ${T.border}`, padding: "10px 4px 18px", display: "flex", justifyContent: "space-around", zIndex: 50 }}>
         {TABS.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id === "gut" ? "body" : t.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", padding: "4px 8px", minWidth: 44 }}>
+          <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, background: "none", border: "none", cursor: "pointer", padding: "4px 8px", minWidth: 44 }}>
             <span style={{ fontSize: "1rem", color: tab === t.id ? T.accent : T.text, opacity: tab === t.id ? 1 : 0.28, transition: "all 0.15s" }}>{t.icon}</span>
             <span style={{ fontFamily: "monospace", fontSize: "0.5rem", letterSpacing: "0.08em", color: tab === t.id ? T.accent : T.muted, transition: "color 0.15s" }}>{t.label}</span>
             {tab === t.id && <div style={{ width: 14, height: 2, background: T.accent, borderRadius: 1 }} />}
