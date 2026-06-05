@@ -930,7 +930,7 @@ export default function App() {
 
   const callClaude = async (system, messages) => {
     try {
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const res = await fetch("/openai/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
