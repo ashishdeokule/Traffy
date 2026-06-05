@@ -930,18 +930,20 @@ export default function App() {
 
   const callClaude = async (system, messages) => {
     try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": "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",
-          "anthropic-version": "2023-06-01",
-          "anthropic-dangerous-direct-browser-access": "true",
-        },
-        body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 1000, system, messages }),
-      });
-      const data = await res.json();
-      return data.content?.[0]?.text || "No response.";
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer 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`
+  },
+  body: JSON.stringify({
+    model: "llama-3.3-70b-versatile",
+    max_tokens: 1000,
+    messages: [{ role: "system", content: system }, ...messages]
+  })
+});
+const data = await res.json();
+return data.choices[0].message.content;
     } catch (e) { return "Connection error: " + e.message; }
   };
 
